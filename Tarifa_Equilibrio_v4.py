@@ -7,18 +7,21 @@
 # 4- Introdução de interface para entrada e saída de dados através da Framework GUI Tkinter
 
 
-import pandas as pd
-import xlsxwriter
+import locale
 import tkinter as tk
 from tkinter import ttk
-import locale
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import xlsxwriter
+
 locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
 
 class CalculaTarifa:
 
     def __init__(self, ano_atipico, ano_referencia, tarifa_vigente, perda_custo, planilha_BD2, lista_excel):
-# variáveis de entrada
+        # variáveis de entrada
         self.ano_atipico = ano_atipico                      # ano da queda de oferta/ demanda de pax
         self.ano_referencia = ano_referencia                # ano de referência relativo à ofeta/ demanda de pax
         self.tarifa_vigente = tarifa_vigente                # tarifa praticada vigente
@@ -26,14 +29,14 @@ class CalculaTarifa:
         self.planilha_BD2 = planilha_BD2                    # planilha BD2 importada para o Pandas
         self.lista_excel = lista_excel                      # corresponde BD2.xlsx convertido em lista
 
-# variáveis de saída
+        # variáveis de saída
         self.total_ano_anterior_km = 0
         self.total_ano_anterior_pax = 0
         self.total_ano_atipico_km = 0
         self.total_ano_atipico_pax = 0
         self.tarifa_equilibrio = 0
 
-# totais do ano atípico e do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
+    # totais do ano atípico e do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
     def soma_excel(self):
         tabelaKM = {}
         tabelaPAX = {}
@@ -49,29 +52,29 @@ class CalculaTarifa:
                 self.total_ano_anterior_pax = tabelaPAX[self.lista_excel[i]]
         return self.total_ano_anterior_km, self.total_ano_anterior_pax, self.total_ano_atipico_km, self.total_ano_atipico_pax
 
-# calculo do IPK de pax pagantes do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
+    # calculo do IPK de pax pagantes do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
     def calcula_ipk_ano_anterior(self):
         return self.total_ano_anterior_pax / self.total_ano_anterior_km
 
-# calculo do IPK de pax pagantes do ano atípico (ano de queda de oferta/ demanda de pax)
+    # calculo do IPK de pax pagantes do ano atípico (ano de queda de oferta/ demanda de pax)
     def calcula_ipk_ano_atipico(self):
         return self.total_ano_atipico_pax / self.total_ano_atipico_km
 
-# tarifa calculada em função da queda de oferta/ demanda de pax (manutenção do equilíbrio econômico-financeiro)
+    # tarifa calculada em função da queda de oferta/ demanda de pax (manutenção do equilíbrio econômico-financeiro)
     def tarifa_equilibrada(self):
         custo_atual = float(self.tarifa_vigente) * self.calcula_ipk_ano_anterior()
         custo_novo = custo_atual * (1 - (self.total_ano_atipico_km / self.total_ano_anterior_km * self.perda_custo))
         self.tarifa_equilibrio = custo_novo / self.calcula_ipk_ano_atipico()
         return self.calcula_ipk_ano_anterior(), self.calcula_ipk_ano_atipico(), self.tarifa_equilibrio
 
-# mostrando gráfico de barras, com index modificado
+    # mostrando gráfico de barras, com index modificado
     def mostra_grafico(self):
         self.geraExcel = pd.DataFrame({'valor': [float(self.tarifa_vigente), float(self.tarifa_equilibrio)]},
                                       index=['T-vig', 'T-eq'])
         self.geraExcel['valor'].plot.barh()
         return plt.show()
 
-# gerando arquivo BD2_teq.xlsx com as tarifas vigente e de equilíbrio
+    # gerando arquivo BD2_teq.xlsx com as tarifas vigente e de equilíbrio
     def gera_Excel(self):
         gravaExcel = xlsxwriter.Workbook('BD2_teq.xlsx')
         planilhaUnica = gravaExcel.add_worksheet('Tarifa de equilíbrio')
@@ -90,6 +93,7 @@ class CalculaTarifa:
 
         gravaExcel.close()
         return
+
 
 # trabalha com os valores da GUI
 def inicio():
@@ -135,6 +139,7 @@ def inicio():
     ct.gera_Excel()
     return
 
+
 def mediaTarifa():
     mt = 0
     for i in range(len(lista_BD2)):
@@ -143,6 +148,7 @@ def mediaTarifa():
             mt = d_fr['tarifa'].sum() / 12
     return mt
 
+
 def anoAtip_Func(event):
     label_tarifaVig = tk.Label(Janela, text=f'TARIFA VIGENTE = {locale.currency(mediaTarifa())}')
     label_tarifaVig.place(height=30, width=150, x=360, y=27)
@@ -150,7 +156,7 @@ def anoAtip_Func(event):
 
 
 if __name__ == '__main__':
-# ativa biblioteca Tkinter
+    # ativa biblioteca Tkinter
     Janela = tk.Tk()
     Janela.title(f'Calcula Tarifa de Equilíbrio')
 
