@@ -38,18 +38,18 @@ class CalculaTarifa:
 
     # totais do ano atípico e do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
     def soma_excel(self):
-        tabelaKM = {}
-        tabelaPAX = {}
+        tabela_km = dict()
+        tabela_pax = dict()
         for i in range(len(self.lista_excel)):
             d_fr = pd.DataFrame(self.planilha_BD2[self.lista_excel[i]])
-            tabelaKM.update({self.lista_excel[i]: d_fr['km coberto'].sum()})
-            tabelaPAX.update({self.lista_excel[i]: d_fr['pax pagantes'].sum()})
+            tabela_km.update({self.lista_excel[i]: d_fr['km coberto'].sum()})
+            tabela_pax.update({self.lista_excel[i]: d_fr['pax pagantes'].sum()})
             if self.ano_atipico == self.lista_excel[i]:
-                self.total_ano_atipico_km = tabelaKM[self.lista_excel[i]]
-                self.total_ano_atipico_pax = tabelaPAX[self.lista_excel[i]]
+                self.total_ano_atipico_km = tabela_km[self.lista_excel[i]]
+                self.total_ano_atipico_pax = tabela_pax[self.lista_excel[i]]
             if self.ano_referencia == self.lista_excel[i]:
-                self.total_ano_anterior_km = tabelaKM[self.lista_excel[i]]
-                self.total_ano_anterior_pax = tabelaPAX[self.lista_excel[i]]
+                self.total_ano_anterior_km = tabela_km[self.lista_excel[i]]
+                self.total_ano_anterior_pax = tabela_pax[self.lista_excel[i]]
         return self.total_ano_anterior_km, self.total_ano_anterior_pax, self.total_ano_atipico_km, self.total_ano_atipico_pax
 
     # calculo do IPK de pax pagantes do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
@@ -69,13 +69,13 @@ class CalculaTarifa:
 
     # mostrando gráfico de barras, com index modificado
     def mostra_grafico(self):
-        self.geraExcel = pd.DataFrame({'valor': [float(self.tarifa_vigente), float(self.tarifa_equilibrio)]},
-                                      index=['T-vig', 'T-eq'])
-        self.geraExcel['valor'].plot.barh()
-        return plt.show()
+        base = pd.DataFrame({'valor': [float(self.tarifa_vigente), float(self.tarifa_equilibrio)]},
+                            index=['T-vig', 'T-eq'])
+        base['valor'].plot.barh()
+        plt.show()
 
     # gerando arquivo BD2_teq.xlsx com as tarifas vigente e de equilíbrio
-    def gera_Excel(self):
+    def gera_excel(self):
         gravaExcel = xlsxwriter.Workbook('data/BD2_teq.xlsx')
         planilhaUnica = gravaExcel.add_worksheet('Tarifa de equilíbrio')
         monta_celulas = (['T-vig', locale.currency(self.tarifa_vigente)], ['T-eq', locale.currency(self.tarifa_equilibrio)])
@@ -92,7 +92,6 @@ class CalculaTarifa:
             row += 1
 
         gravaExcel.close()
-        return
 
 
 # trabalha com os valores da GUI
@@ -136,8 +135,7 @@ def inicio():
         label_teq = tk.Label(Janela, text=saida)
         label_teq.grid(row=i + 15, column=0, padx=44, pady=1, stick='W')
 
-    ct.gera_Excel()
-    return
+    ct.gera_excel()
 
 
 def mediaTarifa():
@@ -152,7 +150,10 @@ def mediaTarifa():
 def anoAtip_Func(event):
     label_tarifaVig = tk.Label(Janela, text=f'TARIFA VIGENTE = {locale.currency(mediaTarifa())}')
     label_tarifaVig.place(height=30, width=150, x=360, y=27)
-    return
+
+
+def main():
+    pass
 
 
 if __name__ == '__main__':
@@ -160,7 +161,7 @@ if __name__ == '__main__':
     Janela = tk.Tk()
     Janela.title(f'Calcula Tarifa de Equilíbrio')
 
-# define geometry
+    # define geometry
     largura = 550
     altura = 430
     largura_screen = Janela.winfo_screenwidth()
@@ -169,8 +170,8 @@ if __name__ == '__main__':
     posy = (altura_screen - altura) / 2
     Janela.geometry('%dx%d+%d+%d' % (largura, altura, posx, posy))
 
-# importacão para o Pandas do arquivo em Excel, com planilhas separadas para cada ano
-    planilha_0 = pd.read_excel('BD2.xlsx', None)
+    # importacão para o Pandas do arquivo em Excel, com planilhas separadas para cada ano
+    planilha_0 = pd.read_excel('data/BD2.xlsx', None)
     lista_BD2 = list(planilha_0.keys())
 
     label_anoAtip = tk.Label(Janela, text=f'ANO ATÍPICO')
@@ -192,5 +193,5 @@ if __name__ == '__main__':
     cmd_Fim = tk.Button(Janela, text=f'Fim', command=Janela.quit)
     cmd_Fim.place(height=30, width=70, x=330, y=170)
 
-# mainLoop()
+    # mainLoop()
     Janela.mainloop()
