@@ -13,6 +13,6 @@ Calcula tarifa de equilíbrio (Tarifa_Equilíbrio_v4.py)
 1. README em imagens? Talvez fazer aqui direto para permitir evoluções/alterações
 2. Correções de forma da PYCHARM. Vários. De fato, acho que facilita a visualização do código.
 
-![img.png](img.png)
+![img.png](data/img.png)
 
 3. 

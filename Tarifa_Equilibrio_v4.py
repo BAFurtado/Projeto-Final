@@ -76,7 +76,7 @@ class CalculaTarifa:
 
     # gerando arquivo BD2_teq.xlsx com as tarifas vigente e de equilíbrio
     def gera_Excel(self):
-        gravaExcel = xlsxwriter.Workbook('BD2_teq.xlsx')
+        gravaExcel = xlsxwriter.Workbook('data/BD2_teq.xlsx')
         planilhaUnica = gravaExcel.add_worksheet('Tarifa de equilíbrio')
         monta_celulas = (['T-vig', locale.currency(self.tarifa_vigente)], ['T-eq', locale.currency(self.tarifa_equilibrio)])
         centro = gravaExcel.add_format()
