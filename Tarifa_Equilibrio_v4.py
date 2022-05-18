@@ -36,8 +36,8 @@ class CalculaTarifa:
         self.total_ano_atipico_pax = 0
         self.tarifa_equilibrio = 0
 
-    # totais do ano atípico e do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
     def soma_excel(self):
+        # totais do ano atípico e do ano de referência (oferta/ demanda de pax de acordo com o planejamento)
         tabela_km = dict()
         tabela_pax = dict()
         for i in range(len(self.lista_excel)):
@@ -153,6 +153,10 @@ def anoAtip_Func(event):
 
 
 def main():
+    # 1. Ler arquivos
+    # 2. Preparar dados
+    # 3. Fazer análise
+    # 4. Plotar resultados
     pass
 
 
@@ -160,6 +164,9 @@ if __name__ == '__main__':
     # ativa biblioteca Tkinter
     Janela = tk.Tk()
     Janela.title(f'Calcula Tarifa de Equilíbrio')
+
+    ano_atipico, ano_referencia, tarifa_vigente, perda_custo, planilha_BD2, lista_excel = 0, 0, 0, 0, 0, 0
+    calculo = CalculaTarifa(ano_atipico, ano_referencia, tarifa_vigente, perda_custo, planilha_BD2, lista_excel)
 
     # define geometry
     largura = 550
